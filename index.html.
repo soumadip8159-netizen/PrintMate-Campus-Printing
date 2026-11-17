@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrintMate - Campus Printing</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;font-family:Arial,sans-serif;
+ background:#f3f6fc;color:#172b4d
+}
+header{
+ background:#102a50;color:white;
+ padding:25px 18px;text-align:center
+}
+header h1{font-size:32px;margin:5px}
+header p{color:#d4e2f7}
+main{max-width:520px;margin:25px auto;padding:15px}
+.card{
+ background:white;padding:22px;
+ border-radius:18px;
+ box-shadow:0 5px 22px #142b5018
+}
+h2{margin-top:0}
+label{display:block;font-weight:bold;margin:17px 0 8px}
+input,select{
+ width:100%;padding:13px;
+ border:1px solid #ccd5e3;
+ border-radius:9px;background:white;
+ font-size:15px
+}
+button{
+ width:100%;padding:15px;margin-top:20px;
+ border:0;border-radius:10px;
+ background:#2165d5;color:white;
+ font-size:16px;font-weight:bold
+}
+.price{
+ margin-top:20px;padding:17px;
+ background:#eaf1ff;border-radius:10px;
+ display:flex;justify-content:space-between;
+ font-weight:bold
+}
+#result{
+ display:none;margin-top:20px;padding:15px;
+ background:#e8f7ed;border-radius:10px;
+ overflow-wrap:anywhere
+}
+footer{text-align:center;padding:25px;color:#68768b}
+</style>
+</head>
+<body>
+
+<header>
+<h1>PrintMate</h1>
+<p>Send. Print. Pick Up.</p>
+</header>
+
+<main>
+<div class="card">
+<h2>Smart Campus Printing</h2>
+<p>Upload your document and customize your print order.</p>
+
+<label>Select Document</label>
+<input type="file" id="file" accept=".pdf,.doc,.docx">
+
+<label>Printing Type</label>
+<select id="type">
+<option value="1">Black & White - ₹1/page</option>
+<option value="5">Colour - ₹5/page</option>
+</select>
+
+<label>Printing Side</label>
+<select id="side">
+<option value="1">Single Side</option>
+<option value="0.6">Double Side - estimated rate</option>
+</select>
+
+<label>Number of Pages</label>
+<input type="number" id="pages" min="1" value="1">
+
+<label>Number of Copies</label>
+<input type="number" id="copies" min="1" value="1">
+
+<div class="price">
+<span>Estimated Price</span>
+<span id="total">₹1.00</span>
+</div>
+
+<button id="orderBtn">Place Demo Order</button>
+<div id="result"></div>
+</div>
+</main>
+
+<footer>
+PrintMate © 2026<br>
+Campus Smart Printing Platform<br>
+Prototype Version 1.0
+</footer>
+
+<script>
+const fileInput=document.getElementById("file");
+const type=document.getElementById("type");
+const side=document.getElementById("side");
+const pages=document.getElementById("pages");
+const copies=document.getElementById("copies");
+const total=document.getElementById("total");
+const result=document.getElementById("result");
+
+function calculate(){
+ const p=Math.max(1,Math.floor(Number(pages.value)||1));
+ const c=Math.max(1,Math.floor(Number(copies.value)||1));
+ const amount=p*c*Number(type.value)*Number(side.value);
+ total.textContent="₹"+amount.toFixed(2);
+ return amount;
+}
+
+[type,side,pages,copies].forEach(el=>{
+ el.addEventListener("input",calculate);
+ el.addEventListener("change",calculate);
+});
+
+document.getElementById("orderBtn").addEventListener("click",()=>{
+ const file=fileInput.files[0];
+
+ if(!file){
+  alert("Please select a document.");
+  return;
+ }
+
+ if(!/\.(pdf|doc|docx)$/i.test(file.name)){
+  alert("Please select a PDF or Word document.");
+  return;
+ }
+
+ const id="PM"+Date.now().toString().slice(-7);
+
+ result.style.display="block";
+ result.replaceChildren();
+
+ const heading=document.createElement("h3");
+ heading.textContent="Demo Order Created!";
+
+ const details=[
+  "Order ID: "+id,
+  "Document: "+file.name,
+  "Estimated Price: ₹"+calculate().toFixed(2),
+  "Status: Demo order only"
+ ];
+
+ result.appendChild(heading);
+ details.forEach(item=>{
+  const p=document.createElement("p");
+  p.textContent=item;
+  result.appendChild(p);
+ });
+
+});
+calculate();
+</script>
+</body>
+</html>
